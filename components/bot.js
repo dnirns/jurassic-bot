@@ -1,12 +1,12 @@
 // import { Promise } from 'bluebird'
 import { config } from './config.js'
 import {
-  postTweet,
   getTweets,
   getUser,
   getUserTweets,
   getUserByUsername,
-} from './tweets.js'
+} from './apiV2/tweets.js'
+import { postTweet } from './apiV1/tweets.js'
 // import { generator } from './generator'
 // import * as fs from 'fs'
 
@@ -30,21 +30,11 @@ const robotActions = {
 }
 
 const onBoot = () => {
-  // if (
-  //   !config.twitter.consumer_key &&
-  //   !config.twitter.consumer_secret &&
-  //   !config.twitter.access_token_key &&
-  //   !config.twitter.access_token_secret
-  // ) {
-  //   console.log('Error: No credentials provided.')
-  //   return
-  // }
-
   if (config.settings.tweetOnStartup) {
-    robotActions.lastTweet = currentTime
-    config.settings.lastTweetReceivedTime = robotActions.lastTweet
+    // robotActions.lastTweet = currentTime
+    // config.settings.lastTweetReceivedTime = robotActions.lastTweet
     const newTweet = 'this is a test tweet'
-    // postTweet(newTweet)
+    postTweet(newTweet)
     console.log(`tweeted: ${newTweet}`)
   }
 }
@@ -61,7 +51,7 @@ const botTasks = () => {
 }
 
 export const botInit = () => {
-  // console.log('-== CONFIG SETTINGS ==-')
+  // console.log('CONFIG...)
   // console.log(' -Post to Twitter? ' + config.settings.postTweets)
   // console.log(' -Repond to DMs? ' + config.settings.respondDMs)
   // console.log(' -Repond to replies? ' + config.settings.respondReplies)
@@ -72,12 +62,14 @@ export const botInit = () => {
   // )
   // console.log(' -Tweet interval: ' + config.settings.postInterval + ' seconds')
 
-  // onBoot()
+  onBoot()
   // getTweets()
   // getUser('2149622708')
   // getUserTweets('2149622708')
-  getUserByUsername('jurassic_ebooks')
+  // getUserByUsername('jurassic_ebooks')
   // postTweet('test tweet')
+
+  //* run botTasks every 5 secs
   // setInterval(() => {
   //   botTasks()
   //   console.log(`ran bot tasks`)

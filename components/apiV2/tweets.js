@@ -1,9 +1,10 @@
+//* FUNCTIONS FOR TWITTER API V2
+
 import dotenv from 'dotenv'
 import Twitter from 'twitter-v2'
-import { config } from './config.js'
 
 dotenv.config()
-const client = new Twitter({
+export const client = new Twitter({
   consumer_key: process.env.TWITTER_CONSUMER_KEY,
   consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
   access_token_key: process.env.TWITTER_ACCESS_TOKEN,
@@ -40,20 +41,4 @@ export const getUser = async (author_id) => {
 export const getUserByUsername = async (username) => {
   const { data } = await client.get(`users/by/username/${username}`)
   console.log(data)
-}
-
-//* Posting new tweet:
-//* API reference: https://bit.ly/31jJLnn
-//! NOT WORKING
-
-export const postTweet = async (sendMsg) => {
-  if (config.settings.postTweets) {
-    await client.post('statuses/update', { status: sendMsg }),
-      (error) => {
-        if (error) {
-          console.log('error posting tweet, possible API limit reached.')
-          console.log(error)
-        }
-      }
-  }
 }
