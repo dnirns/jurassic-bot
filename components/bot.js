@@ -1,26 +1,23 @@
-// import { Promise } from 'bluebird'
-import { config } from './config.js'
-import {
-  getTweets,
-  getUser,
-  getUserTweets,
-  getUserByUsername,
-} from './apiV2/tweets.js'
+import { createRequire } from 'module'
 import { postTweet } from './apiV1/tweets.js'
-// import { generator } from './generator'
-// import * as fs from 'fs'
+import config from './config.js'
 
-// fs = Promise.promisifyAll(fs)
-// generator = Promise.promisifyAll(generator)
+const require = createRequire(import.meta.url)
+let generator = require('./generator.cjs')
 
-// generator.stopwords = fs
-//   .readFileAsync('./data/stopwords.txt')
-//   .toString()
-//   .split('\n')
+const Promise = require('bluebird')
+let fs = require('fs')
 
-// tweetfile = './tweets.txt'
+fs = Promise.promisifyAll(fs)
+
+generator = Promise.promisifyAll(generator)
+generator.stopWords = fs
+  .readFileAsync('./data/stopwords.txt')
+  .toString()
+  .split('\n')
 
 const currentTime = Math.floor(Date.now() / 1000)
+const tweetFile = './data/tweets.txt'
 
 const robotActions = {
   lastFollow: 0,
@@ -29,49 +26,56 @@ const robotActions = {
   lastTweet: 0,
 }
 
+const init = () => {
+  fs.readFileAsync(tweetFile)
+    .then((fileContents) => {
+      console.log(
+        "\nAnalyzing data and creating word corpus from file '" +
+          tweetFile +
+          "'"
+      )
+      const content = fileContents.toString().split('\n')
+      return content
+    })
+    .then((content) => {
+      return generator.cleanContent(content)
+    })
+    .then((content) => {
+      return generator.buildCorpus(content)
+    })
+    .then(() => {
+      onBoot()
+
+      setInterval(() => {
+        botTasks()
+        console.log(`ran bot tasks`)
+      }, 5000)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
 const onBoot = () => {
   if (config.settings.tweetOnStartup) {
-    // robotActions.lastTweet = currentTime
-    // config.settings.lastTweetReceivedTime = robotActions.lastTweet
-    const newTweet = 'this is a test tweet'
+    robotActions.lastTweet = currentTime
+    config.settings.lastTweetReceivedTime = robotActions.lastTweet
+    const newTweet = generator.makeTweet(140)
     postTweet(newTweet)
-    console.log(`tweeted: ${newTweet}`)
+    console.log(`tweeted on startup: ${newTweet}`)
   }
 }
 
 const botTasks = () => {
-  // console.log(`ran bot tasks`)
-  // if (currentTime - robotActions.lastTweet >= config.settings.postInterval) {
-  //   robotActions.lastTweet = currentTime
-  //   const tweet = 'this is a second test tweet'
-  //   postTweet(tweet)
-  //   console.log(`running tweets: ${tweet}`)
-  // }
-  // getTweets()
+  console.log(`ran bot tasks`)
+  if (currentTime - robotActions.lastTweet >= config.settings.postInterval) {
+    robotActions.lastTweet = currentTime
+    config.settings.lastTweetReceivedTime = robotActions.lastTweet
+    const tweet = 'this is a second test tweet'
+    const newTweet = generator.makeTweet(140)
+    postTweet(newTweet)
+    console.log(`running tweets: ${tweet}`)
+  }
 }
 
-export const botInit = () => {
-  // console.log('CONFIG...)
-  // console.log(' -Post to Twitter? ' + config.settings.postTweets)
-  // console.log(' -Repond to DMs? ' + config.settings.respondDMs)
-  // console.log(' -Repond to replies? ' + config.settings.respondReplies)
-  // console.log(' -Random replies? ' + config.settings.randomReplies)
-  // console.log(' -Follow new users? ' + config.settings.followUsers)
-  // console.log(
-  //   ' -Mark tweets as favorites? ' + config.settings.canFavoriteTweets
-  // )
-  // console.log(' -Tweet interval: ' + config.settings.postInterval + ' seconds')
-
-  onBoot()
-  // getTweets()
-  // getUser('2149622708')
-  // getUserTweets('2149622708')
-  // getUserByUsername('jurassic_ebooks')
-  // postTweet('test tweet')
-
-  //* run botTasks every 5 secs
-  // setInterval(() => {
-  //   botTasks()
-  //   console.log(`ran bot tasks`)
-  // }, 5000)
-}
+export default init

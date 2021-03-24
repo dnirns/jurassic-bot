@@ -1,5 +1,4 @@
 //* FUNCTIONS FOR TWITTER API V2
-
 import dotenv from 'dotenv'
 import Twitter from 'twitter-v2'
 

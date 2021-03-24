@@ -1,3 +1,3 @@
-import { botInit } from './components/bot.js'
+import init from './components/bot.js'
 
-botInit()
+init()

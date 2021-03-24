@@ -1,6 +1,8 @@
+//* FUNCTIONS  FOR TWITTER API V1
+
 import Twitter from 'twitter'
 import dotenv from 'dotenv'
-import { config } from '../config.js'
+import config from '../config.js'
 
 dotenv.config()
 export const client = new Twitter({
@@ -10,9 +12,11 @@ export const client = new Twitter({
   access_token_secret: process.env.TWITTER_ACCESS_SECRET,
 })
 
-export const postTweet = async (send_msg) => {
+//* POST TWEET TO TIMELINE
+//* WILL ERROR AND NOT POST IF DUPLICATE TWEET
+export const postTweet = async (tweet) => {
   if (config.settings.postTweets) {
-    await client.post('statuses/update', { status: send_msg }, (err) => {
+    await client.post('statuses/update', { status: tweet }, (err) => {
       err ? console.log(err) : null
     })
   }
