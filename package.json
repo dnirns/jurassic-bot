@@ -1,0 +1,23 @@
+{
+  "name": "jurassic-bot",
+  "version": "1.0.0",
+  "description": "jurassic-park twitter bot",
+  "main": "bot.js",
+  "scripts": {
+    "start": "nodemon bot.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dnirns/jurassic-bot.git"
+  },
+  "author": "Daniel Irons",
+  "license": "MIT",
+  "dependencies": {
+    "bluebird": "^3.7.2",
+    "dotenv": "^8.2.0",
+    "nodemon": "^2.0.7",
+    "twitter": "^1.7.1",
+    "twitter-v2": "^1.0.7"
+  },
+  "type": "module"
+}
