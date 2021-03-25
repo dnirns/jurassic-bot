@@ -1,13 +1,14 @@
 //* FUNCTIONS FOR TWITTER API V2
-import dotenv from 'dotenv'
-import Twitter from 'twitter-v2'
 
-dotenv.config()
+import Twitter from 'twitter-v2'
+import config from '../config.js'
+
+let mentions = []
+
 export const client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-  access_token_secret: process.env.TWITTER_ACCESS_SECRET,
+  consumer_key: config.credentials.consumer_key,
+  consumer_secret: config.credentials.consumer_secret,
+  bearer_token: config.credentials.bearer_token,
 })
 
 //* MAKE ASYNC REQUEST FOR TWEETS WITH TWITTER-V2 NODE PACKAGE
@@ -40,4 +41,19 @@ export const getUser = async (author_id) => {
 export const getUserByUsername = async (username) => {
   const { data } = await client.get(`users/by/username/${username}`)
   console.log(data)
+}
+
+//* GET MENTIONS
+// API ref: https://bit.ly/3rh66wI
+export const getMentions = async (author_id) => {
+  const { data } = await client.get(`users/${author_id}/mentions`, {
+    expansions: 'author_id',
+  })
+  //* RETURN LATEST DATA FOR THE LATEST MENTION
+
+  if (!mentions.includes(data[0].id)) {
+    mentions.push(data[0].id)
+  }
+
+  console.log(`current mention id's: ${mentions.map((mention) => mention)}`)
 }

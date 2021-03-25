@@ -1,15 +1,12 @@
 //* FUNCTIONS  FOR TWITTER API V1
-
 import Twitter from 'twitter'
-import dotenv from 'dotenv'
 import config from '../config.js'
 
-dotenv.config()
 export const client = new Twitter({
-  consumer_key: process.env.TWITTER_CONSUMER_KEY,
-  consumer_secret: process.env.TWITTER_CONSUMER_SECRET,
-  access_token_key: process.env.TWITTER_ACCESS_TOKEN,
-  access_token_secret: process.env.TWITTER_ACCESS_SECRET,
+  consumer_key: config.credentials.consumer_key,
+  consumer_secret: config.credentials.consumer_secret,
+  access_token_key: config.credentials.access_token,
+  access_token_secret: config.credentials.access_token_secret,
 })
 
 //* POST TWEET TO TIMELINE
