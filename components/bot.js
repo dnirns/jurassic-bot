@@ -59,7 +59,7 @@ const init = () => {
     .then(() => {
       onBoot()
 
-      //* RUN BOT TASKS EVERY 5 SECONDS
+      //* RUN BOT TASKS EVERY 1 MIN
       setInterval(() => {
         botTasks()
       }, 60000)
