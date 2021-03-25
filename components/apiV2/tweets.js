@@ -4,6 +4,7 @@ import Twitter from 'twitter-v2'
 import config from '../config.js'
 
 let mentions = []
+let lastUser = ''
 
 export const client = new Twitter({
   consumer_key: config.credentials.consumer_key,
@@ -33,7 +34,8 @@ export const getUserTweets = async (user_id) => {
 // API ref: https://bit.ly/31aJ144
 export const getUser = async (author_id) => {
   const { data } = await client.get(`users/${author_id}`)
-  console.log(data)
+  lastUser = data.username
+  console.log(`* last mention by: @${lastUser}`)
 }
 
 //* GET USER BY USERNAME
@@ -53,7 +55,10 @@ export const getMentions = async (author_id) => {
 
   if (!mentions.includes(data[0].id)) {
     mentions.push(data[0].id)
+    getUser(data[0].author_id)
+    console.log(`* last reply: ${data[0].text}`)
+  } else {
+    console.log(`** no new mentions since last checked **`)
   }
-
-  console.log(`current mention id's: ${mentions.map((mention) => mention)}`)
+  // console.log(`all current mention id's: ${mentions.map((mention) => mention)}`)
 }
